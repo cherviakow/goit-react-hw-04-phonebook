@@ -1,0 +1,35 @@
+.formDiv{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    width: 400px;
+    height: auto;
+    text-align: center;
+}
+
+.contactInput{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 70%;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid rgb(166, 166, 166);
+}
+
+.sabmitBtn{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 5px;
+    transition: all 500ms ease;
+}
+
+.sabmitBtn:hover{
+    background-color: #2f63c3;
+	color: #ffffff;
+}

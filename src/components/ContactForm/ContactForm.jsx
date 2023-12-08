@@ -1,38 +1,37 @@
-import { Component } from "react";
+import { useState } from "react";
 import css from "./ContactForm.module.css"
 
-class ContactForm extends Component {
+const ContactForm = ({onSubmit}) => {
 
-state = {
- name: '',
- number: '',
-}    
+const [name, setName] = useState('');
+const [number, setNumber] = useState('');  
 
-
-hangleChange = event=> {
+const hangleChange = (event) => {
     const { name, value } = event.currentTarget;
-    this.setState({
-      [name]: value,
-    });
+  if (name === 'number'){
+    setNumber(value);
+  }
+  if (name === 'name'){
+    setName(value);
+  }
 }
 
-handleSabmit = event => {
+const handleSabmit = event => {
   event.preventDefault();
-    this.props.onSubmit(this.state);
-    this.reset();
+    onSubmit(name, number);
+    reset();
   };
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
+
+  const reset = () => {
+      setName('');
+      setNumber('');
 }
 
 
-render(){
+
     return(
     <div className={css.formDiv}>
-      <form onSubmit={this.handleSabmit}>
+      <form onSubmit={handleSabmit}>
       <label className="label">
     <h1>Phonebook</h1>
 
@@ -44,8 +43,8 @@ render(){
                 // pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 // title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 // required
-                onChange={this.hangleChange}
-                value={this.state.name}
+                onChange={hangleChange}
+                value={name}
                  /> 
                  </label>
           
@@ -58,8 +57,8 @@ render(){
                 // pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 // title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 // required
-                onChange={this.hangleChange}
-                value={this.state.number}
+                onChange={hangleChange}
+                value={number}
                  /> 
                  </label>
                  <button className={css.sabmitBtn} type="submit">Add contact
@@ -68,6 +67,6 @@ render(){
         </div>       
     )
 }
-}
+
 
 export default ContactForm;

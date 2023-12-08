@@ -1,98 +1,89 @@
 import { nanoid } from 'nanoid';
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import ContactForm from "./ContactForm/ContactForm";
 import ContactList from "./ContactList/ContactList";
 import Filter from "./Filter/Filter";
 import Container from './Container/Container';
+import Notification from './Notification/Notification';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-class App extends Component {
-  state = { 
+const App = () => {
 
-  toDo: [],
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(localStorage.getItem('contacts')) ?? []
+  );
 
-    contacts: [
-      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
-      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
-    ],
-    filter: '',
-   } 
+  const [filter, setFilter] = useState('');
 
-formSubmitHandler = ({name, number}) =>{
-  const contact = {
-    id: nanoid(),
-    name,
-    number,
-  };
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-const {contacts} = this.state;
-
-if (
-  contacts.find(
-    contact => contact.name.toLowerCase() === name.toLowerCase()
-  )
-) {
-  alert(`${name} is already in contacts.`);
-} else if (contacts.find(contact => contact.number === number)) {
-  alert(`${number} is already in contacts.`);
-} else {
-  this.setState(({ contacts }) => ({
-    contacts: [contact, ...contacts],
-  }));
-}
-}
-
-
-ChangeFilter = e => {
-  this.setState({
-    filter: e.currentTarget.value,
-  });
-};
-
-Delite = todoId => {
-  this.setState(prevState => ({
-    contacts: prevState.contacts.filter(cont => cont.id !== todoId),
-  }));
-};
-
-componentDidMount(){
-
-  const contactEl = JSON.parse(localStorage.getItem('contacts'));
-  if (contactEl) this.setState({contacts: contactEl});
-  console.log(contactEl);
-}
-
-componentDidUpdate(prevProps, prevState){
-
-  if(this.state.contacts !== prevState.contacts){
-    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  const changeFilter = e => {
+    setFilter(e.currentTarget.value.trim());
   }
-  
+
+ const formSubmitHandler = ({ name, number }) => {
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
+      return toast.warning(`${name} is alredy in contacts.`, {
+        autoClose: 2000,
+        theme: 'colored',
+      });
+    } else if (contacts.find(contact => contact.number === number)) {
+      return toast.warning(`${number} is already in contacts`, {
+        autoClose: 2000,
+        theme: 'colored',
+      });
+    } else {
+      setContacts([...contacts, { id: nanoid(), name, number }]);
+      toast.success(`${name} has been added`, {
+        autoClose: 2000,
+        theme: 'colored',
+      });
+    }
+  }
+
+const Delite = (id) => {
+  setContacts(contacts.filter(contact => contact.id !== id));
+  toast.success('The contact has been deleted', {
+    autoClose: 2000,
+  });
 }
 
+// const filteredContacts = () => {
+//   const normalisedFilter = filter.toLowerCase();
+//   return contacts.filter(contact =>
+//     contact.name.toLowerCase().includes(normalisedFilter)
+//   );
+// }
 
-  render() { 
-
-    const { contacts, filter } = this.state;
-    const NomrmalizeFilter = filter.toLowerCase();
-    const VilibleTodos = contacts.filter(cont =>
-      cont.name.toLowerCase().includes(NomrmalizeFilter)
-    );
-
-
+const filteredContacts = () => {
+  return contacts.filter(el => el.name.toLowerCase.includes(filter.toLocaleLowerCase()))
+}
 
     return (
       <>
       <Container>
-      <ContactForm onSubmit={this.formSubmitHandler}/>
-      <Filter value={filter} onChange={this.ChangeFilter}/>
-      <ContactList contacts={VilibleTodos} OnDelite={this.Delite}/>
+      <ContactForm onSubmit={formSubmitHandler}/>
+      <Filter value={filter} onChange={changeFilter}/>
+      {contacts.length === 0 ? (
+        <Notification message="There are no contacts in your phonebook yet" />
+      ) : (
+        <Filter value={filter} onChange={changeFilter} />
+      )}
+      <ContactList contacts={filteredContacts()}
+      Delite={Delite}/>
+      <ToastContainer/>
       </Container>
       </>
     )
   }
-}
+
 
  
 export default App;
